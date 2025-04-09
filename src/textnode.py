@@ -33,7 +33,7 @@ class TextNode:
             case TextType.ITALIC:
                 return LeafNode("i", self.text)
             case TextType.CODE:
-                return LeafNode("`", self.text)
+                return LeafNode("code", self.text)
             case TextType.LINK:
                 return LeafNode("a", self.text, {"href": self.url})
             case TextType.IMAGE:
@@ -66,6 +66,8 @@ class TextNode:
                     for idx, s in enumerate(strings):
                         if len(s) > 0:
                             tt = TextType.TEXT if idx % 2 == 0 else text_type
+                            s = s.replace("\n", " ")
+                            s = re.sub(r"\s+", " ", s)
                             new_nodes.append(TextNode(s, tt))
         return new_nodes
 
