@@ -1,10 +1,16 @@
-from textnode import TextNode, TextType
+import shutil
+import os
+
+
+def copy_static():
+    shutil.rmtree("/home/legion/Development/ssg/public", True)
+    shutil.copytree(
+        "/home/legion/Development/ssg/static", "/home/legion/Development/ssg/public"
+    )
 
 
 def main():
-    tn = TextNode("This is some anchor text",
-                  TextType.LINK, "https://www.boot.dev")
-    print(tn)
+    copy_static()
 
 
 main()
