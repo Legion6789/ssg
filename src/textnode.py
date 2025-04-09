@@ -42,6 +42,16 @@ class TextNode:
                 raise Exception("invalid text type")
 
     @staticmethod
+    def text_to_textnodes(text):
+        nodes = [TextNode(text, TextType.TEXT)]
+        nodes = TextNode.split_nodes_delimiter(nodes, "**", TextType.BOLD)
+        nodes = TextNode.split_nodes_delimiter(nodes, "_", TextType.ITALIC)
+        nodes = TextNode.split_nodes_delimiter(nodes, "`", TextType.CODE)
+        nodes = TextNode.split_nodes_image(nodes)
+        nodes = TextNode.split_nodes_link(nodes)
+        return nodes
+
+    @staticmethod
     def split_nodes_delimiter(old_nodes, delimiter, text_type):
         new_nodes = []
         for n in old_nodes:
@@ -60,11 +70,59 @@ class TextNode:
         return new_nodes
 
     @staticmethod
-    def extract_markdown_images(text):
+    def split_nodes_image(old_nodes):
+        new_nodes = []
+        for n in old_nodes:
+            imgs = TextNode.__extract_markdown_images(n.text)
+            if len(imgs) == 0:
+                new_nodes.append(n)
+            else:
+                text = n.text
+                for img in imgs:
+                    start_idx = text.find(f"![{img[0]}]")
+                    s = text[0:start_idx]
+                    text = text[start_idx:]
+                    if len(s) > 0:
+                        new_nodes.append(TextNode(s, TextType.TEXT))
+
+                    new_nodes.append(TextNode(img[0], TextType.IMAGE, img[1]))
+                    text = text.replace(f"![{img[0]}]({img[1]})", "")
+
+                if len(text) > 0:
+                    new_nodes.append(TextNode(text, TextType.TEXT))
+
+        return new_nodes
+
+    @staticmethod
+    def split_nodes_link(old_nodes):
+        new_nodes = []
+        for n in old_nodes:
+            links = TextNode.__extract_markdown_links(n.text)
+            if len(links) == 0:
+                new_nodes.append(n)
+            else:
+                text = n.text
+                for link in links:
+                    start_idx = text.find(f"[{link[0]}]")
+                    s = text[0:start_idx]
+                    text = text[start_idx:]
+                    if len(s) > 0:
+                        new_nodes.append(TextNode(s, TextType.TEXT))
+
+                    new_nodes.append(TextNode(link[0], TextType.LINK, link[1]))
+                    text = text.replace(f"[{link[0]}]({link[1]})", "")
+
+                if len(text) > 0:
+                    new_nodes.append(TextNode(text, TextType.TEXT))
+
+        return new_nodes
+
+    @staticmethod
+    def __extract_markdown_images(text):
         matches = re.findall(r"!\[([^\[\]]*)\]\(([^\(\)]*)\)", text)
         return matches
 
     @staticmethod
-    def extract_markdown_links(text):
+    def __extract_markdown_links(text):
         matches = re.findall(r"(?<!!)\[([^\[\]]*)\]\(([^\(\)]*)\)", text)
         return matches
