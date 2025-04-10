@@ -46,7 +46,7 @@ class NodeHelper:
             .replace("## ", "")
             .replace("# ", "")
         )
-        return LeafNode(f"h{h_size}", block, None, None)
+        return LeafNode(f"h{h_size}", block, None)
 
     @staticmethod
     def __paragraph_block_to_html_node(block):
@@ -72,7 +72,9 @@ class NodeHelper:
         bullet_nodes = []
         for line in lines:
             line = line[1:]
-            bullet_nodes.append(LeafNode("li", line, None))
+            text_nodes = TextNode.text_to_textnodes(line)
+            children = [text_node.to_html_node() for text_node in text_nodes]
+            bullet_nodes.append(ParentNode("li", children, None))
 
         return ParentNode("ul", bullet_nodes, None)
 
@@ -85,4 +87,4 @@ class NodeHelper:
             line = line[idx:]
             bullet_nodes.append(LeafNode("li", line, None))
 
-        return ParentNode("0l", bullet_nodes, None)
+        return ParentNode("ol", bullet_nodes, None)

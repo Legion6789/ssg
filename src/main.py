@@ -1,5 +1,5 @@
 import shutil
-import os
+from pagegenerator import generate_page
 
 
 def copy_static():
@@ -11,6 +11,12 @@ def copy_static():
 
 def main():
     copy_static()
+    path_prefix = "/home/legion/Development/ssg"
+    generate_page(
+        f"{path_prefix}/content/index.md",
+        f"{path_prefix}/template.html",
+        f"{path_prefix}/public/index.html",
+    )
 
 
 main()
