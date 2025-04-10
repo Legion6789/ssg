@@ -1,26 +1,28 @@
 import shutil
 from pagegenerator import generate_page, generate_pages_recursive
+import sys
 
 
-def copy_static():
-    shutil.rmtree("/home/legion/Development/ssg/public", True)
-    shutil.copytree(
-        "/home/legion/Development/ssg/static", "/home/legion/Development/ssg/public"
-    )
+def copy_static(filepath):
+    shutil.rmtree(f"{filepath}docs", True)
+    shutil.copytree(f"{filepath}static", f"{filepath}docs")
 
 
 def main():
-    copy_static()
-    path_prefix = "/home/legion/Development/ssg"
+    basepath = sys.argv[1] if len(sys.argv) > 1 else "/"
+    filepath = "/home/legion/Development/ssg/"
+    copy_static(filepath)
     # generate_page(
-    #    f"{path_prefix}/content/index.md",
-    #    f"{path_prefix}/template.html",
-    #    f"{path_prefix}/public/index.html",
+    #    f"{filepath}content/index.md",
+    #    f"{filepath}template.html",
+    #    f"{filepath}docs/index.html",
+    #    basepath
     # )
     generate_pages_recursive(
-        f"{path_prefix}/content/",
-        f"{path_prefix}/template.html",
-        f"{path_prefix}/public/",
+        f"{filepath}content/",
+        f"{filepath}template.html",
+        f"{filepath}docs/",
+        basepath,
     )
 
 
