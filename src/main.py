@@ -10,7 +10,7 @@ def copy_static(filepath):
 
 def main():
     basepath = sys.argv[1] if len(sys.argv) > 1 else "/"
-    filepath = "/home/legion/Development/ssg/"
+    filepath = "/home/legion/development/ssg/"
     copy_static(filepath)
     # generate_page(
     #    f"{filepath}content/index.md",
